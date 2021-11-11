@@ -1,31 +1,38 @@
 package com.edoe.api.entity;
 
+import com.edoe.api.enums.Role;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 
 @Entity
+@Table(name = "USER")
 public class User implements Serializable {
 
+    private static final long serialVersionUID = 1373149730113426167L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
     private String email;
+    private String password;
     private String cellphone;
     private String classe;
     private String  identification;
     @Enumerated(EnumType.ORDINAL)
-    private Role role;
+    private Role role = Role.APENAS_DOADOR ;
 
-    public User(Long id, String email, String cellphone, String classe, String identification, Role role) {
+    public User(Long id, String email, String password, String cellphone, String classe, String identification, Role role) {
         this.id = id;
         this.email = email;
+        this.password = password;
         this.cellphone = cellphone;
         this.classe = classe;
         this.identification = identification;
-        this.role = role == null ? Role.APENAS_DOADOR : role;
+        this.role = role;
     }
 
     public User() {
@@ -42,6 +49,14 @@ public class User implements Serializable {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setEmail(String email) {

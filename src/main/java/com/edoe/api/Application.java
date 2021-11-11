@@ -1,7 +1,7 @@
 package com.edoe.api;
 
-import com.edoe.api.entity.Role;
 import com.edoe.api.entity.User;
+import com.edoe.api.enums.Role;
 import com.edoe.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -14,13 +14,16 @@ public class Application implements CommandLineRunner {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
-@Autowired
+
+	@Autowired
 	UserRepository userRepository;
+
 	@Override
 	public void run(String... args) throws Exception {
-		User user1 = new User(null, "teste@teste123", "8399353038", "Igreja", "teste", null);
-		User user2 = new User(null, "teste@teste123", "8399353038", "Igreja", "teste", Role.ADMIN);
-		userRepository.save(user1);
-		userRepository.save(user2);
+		User admin = new User(1L, "admin@admin.com", "12345", "83991625262", "Igreja", "indet", Role.ADMIN);
+
+		userRepository.save(admin);
+
+		System.out.println(admin.getRole());
 	}
 }
