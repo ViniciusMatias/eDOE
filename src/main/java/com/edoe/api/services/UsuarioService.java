@@ -39,12 +39,25 @@ public class UsuarioService {
     }
 
     public User saveUsuario(String authorization ,User user) throws ServletException {
-        String emailToken = serviceJWT.getSujeitoDoToken(authorization);
-        User userToken = getUsuario(emailToken);
-        if(usuarioTemPermissaoAdmin(authorization, userToken.getEmail())){
+
+        if(usuarioTemPermissaoAdmin(authorization,  UsuarioDoToken(authorization))){
             return userRepository.save(user);
         }
         throw new ServletException("Usuario não pode cadastrar");
     }
 
+    public User updateRole(Long id, User userRole, String authorization) throws ServletException {
+        User user = userRepository.getById(id);
+        user.setRole(userRole.getRole());
+        if(usuarioTemPermissaoAdmin(authorization, UsuarioDoToken(authorization))){
+            return userRepository.save(user);
+        }
+        throw new ServletException("Usuario não pode atualizar");
+    }
+
+    public String UsuarioDoToken(String authorization){
+        String emailToken = serviceJWT.getSujeitoDoToken(authorization);
+        User userToken = getUsuario(emailToken);
+        return userToken.getEmail();
+    }
 }
