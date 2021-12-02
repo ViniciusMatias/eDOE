@@ -4,6 +4,7 @@ import com.edoe.api.dto.UserLogin;
 import com.edoe.api.entity.User;
 import com.edoe.api.enums.Role;
 import com.edoe.api.repositories.UserRepository;
+import com.edoe.api.services.exceptions.NotCredentialException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,27 +33,39 @@ public class UsuarioService {
         return false;
     }
 
-    private boolean usuarioTemPermissaoAdmin(String authorizationHeader, String email) throws ServletException {
+    public boolean usuarioTemPermissao(String authorizationHeader, String email) throws NotCredentialException {
+        String subject = serviceJWT.getSujeitoDoToken(authorizationHeader);
+        Optional<User> optUsuario = userRepository.findByEmail(subject);
+        return optUsuario.isPresent() && optUsuario.get().getEmail().equals(email)  ;
+    }
+
+    private boolean usuarioTemPermissaoAdmin(String authorizationHeader, String email) throws NotCredentialException {
         String subject = serviceJWT.getSujeitoDoToken(authorizationHeader);
         Optional<User> optUsuario = userRepository.findByEmail(subject);
         return optUsuario.isPresent() && optUsuario.get().getEmail().equals(email) && optUsuario.get().getRole() == Role.ADMIN ;
     }
 
-    public User saveUsuario(String authorization ,User user) throws ServletException {
+    public boolean usuarioTemPermissaoDoador(String authorizationHeader, String email) throws NotCredentialException {
+        String subject = serviceJWT.getSujeitoDoToken(authorizationHeader);
+        Optional<User> optUsuario = userRepository.findByEmail(subject);
+        return optUsuario.isPresent() && optUsuario.get().getEmail().equals(email) && optUsuario.get().getRole() == Role.APENAS_DOADOR ;
+    }
+
+    public User saveUsuario(String authorization ,User user) throws NotCredentialException {
 
         if(usuarioTemPermissaoAdmin(authorization,  UsuarioDoToken(authorization))){
             return userRepository.save(user);
         }
-        throw new ServletException("Usuario não pode cadastrar");
+        throw new NotCredentialException("Usuario não pode cadastrar");
     }
 
-    public User updateRole(Long id, User userRole, String authorization) throws ServletException {
+    public User updateRole(Long id, User userRole, String authorization) throws NotCredentialException {
         User user = userRepository.getById(id);
         user.setRole(userRole.getRole());
         if(usuarioTemPermissaoAdmin(authorization, UsuarioDoToken(authorization))){
             return userRepository.save(user);
         }
-        throw new ServletException("Usuario não pode atualizar");
+        throw new NotCredentialException("Usuario não pode atualizar");
     }
 
     public String UsuarioDoToken(String authorization){
@@ -60,4 +73,15 @@ public class UsuarioService {
         User userToken = getUsuario(emailToken);
         return userToken.getEmail();
     }
+
+    public User UsuarioDoTokenItem(String authorization){
+        String emailToken = serviceJWT.getSujeitoDoToken(authorization);
+        User userToken = getUsuario(emailToken);
+        return userToken;
+    }
+
+    public User UserByID(Long id) {
+        return userRepository.findById(id).get();
+    }
 }
+

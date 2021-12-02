@@ -24,6 +24,16 @@ public class Application implements CommandLineRunner {
 
 		userRepository.save(admin);
 
-		System.out.println(admin.getRole());
+
+
+		User doador = new User(null, "doador@doador.com", "12345", "83991625262", "Igreja", "indet", Role.APENAS_DOADOR);
+
+		userRepository.save(doador);
+
+		User doador2 = new User(null, "doador@doador2.com", "12345", "83991625262", "Igreja", "indet", Role.APENAS_DOADOR);
+
+		userRepository.save(doador2);
+
+
 	}
 }

@@ -1,10 +1,12 @@
 package com.edoe.api.entity;
 
 import com.edoe.api.enums.Role;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -12,7 +14,7 @@ import java.util.Objects;
 @Table(name = "USER")
 public class User implements Serializable {
 
-    private static final long serialVersionUID = 1373149730113426167L;
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +24,9 @@ public class User implements Serializable {
     private String cellphone;
     private String classe;
     private String  identification;
+    @JsonBackReference
+    @OneToMany(mappedBy = "user")
+    private List<Item> items;
     @Enumerated(EnumType.ORDINAL)
     private Role role = Role.APENAS_DOADOR ;
 

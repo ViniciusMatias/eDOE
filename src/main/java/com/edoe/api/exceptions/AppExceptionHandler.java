@@ -1,5 +1,7 @@
 package com.edoe.api.exceptions;
 
+import com.edoe.api.services.exceptions.NotCredentialException;
+import com.edoe.api.services.exceptions.RepeatedNameException;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +15,26 @@ import java.time.LocalDate;
 @ControllerAdvice
 public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({ExpiredJwtException.class})
-    public ResponseEntity<Object> handlerException(Exception e, WebRequest request)
+
+    @ExceptionHandler({RepeatedNameException.class})
+    public ResponseEntity<Object> RepeatedNameException(Exception e, WebRequest request)
     {
 
         Error error = new Error();
+        error.setStatus(HttpStatus.NOT_FOUND);
         error.setTimestamp(LocalDate.now());
-        error.setError(e.getCause());
+        error.setMessage(e.getMessage());
+
+        return  new ResponseEntity<Object>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({ExpiredJwtException.class})
+    public ResponseEntity<Object> NotCredentialException(Exception e, WebRequest request)
+    {
+
+        Error error = new Error();
+        error.setStatus(HttpStatus.FORBIDDEN);
+        error.setTimestamp(LocalDate.now());
         error.setMessage(e.getMessage());
 
         return  new ResponseEntity<Object>(error, HttpStatus.FORBIDDEN);
