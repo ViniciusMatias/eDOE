@@ -28,6 +28,9 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user")
     private List<Item> items;
 
+    @OneToMany(mappedBy = "user")
+    private List<ItemRequired> itemRequireds;
+
 
     @Enumerated(EnumType.ORDINAL)
     private Role role = Role.APENAS_DOADOR ;

@@ -19,7 +19,7 @@ public class Item implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "descriptor_id")
     private Descriptor descriptor;
 

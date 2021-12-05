@@ -1,5 +1,6 @@
 package com.edoe.api.services;
 
+import com.edoe.api.dto.DescriptorDTO;
 import com.edoe.api.dto.ItemDTO;
 import com.edoe.api.entity.Descriptor;
 import com.edoe.api.entity.Item;
@@ -7,6 +8,7 @@ import com.edoe.api.entity.User;
 import com.edoe.api.enums.Role;
 import com.edoe.api.repositories.ItemRepository;
 import com.edoe.api.services.exceptions.NotCredentialException;
+import com.edoe.api.services.exceptions.RepeatedNameException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +25,17 @@ public class ItemService {
     @Autowired
     private UsuarioService usuarioService;
 
-    public ItemDTO saveItem(String authorization , Item item) throws NotCredentialException {
+    @Autowired
+    private DescriptorService descriptorService;
+
+    public ItemDTO saveItem(String authorization , Item item) throws NotCredentialException, RepeatedNameException {
         User user = usuarioService.UsuarioDoTokenItem(authorization);
         if(usuarioService.usuarioTemPermissaoDoador(authorization,  usuarioService.UsuarioDoToken(authorization))){
-            if( item.getUser().getRole() == Role.APENAS_DOADOR){
+            if( user.getRole() == Role.APENAS_DOADOR){
+
+                if(descriptorService.existDescriptor(item.getDescriptor())){
+                    throw new RepeatedNameException("Descritor ja existente");
+                }
                 item.setUser(user);
                 Item itemSave =  itemRepository.save(item);
                 return new ItemDTO(itemSave);
@@ -68,20 +77,20 @@ public class ItemService {
     }
 
 
-    public List<Descriptor> findAllItem(String authorization, String order)  throws NotCredentialException {
+    public List<DescriptorDTO> findAllItem(String authorization, String order)  throws NotCredentialException {
         if(usuarioService.usuarioTemPermissao(authorization,  usuarioService.UsuarioDoToken(authorization))){
            if(order.equals("dsc")){
                return getItemNotDeleted()
                        .stream()
                        .map((items) -> items.getDescriptor())
-                       .sorted(Comparator.comparing(Descriptor::getName))
+                       .sorted(Comparator.comparing(DescriptorDTO::getName))
                        .collect(Collectors.toList());
            }
            if (order.equals("asc")){
                return getItemNotDeleted()
                        .stream()
                        .map((items) -> items.getDescriptor())
-                       .sorted(Comparator.comparing(Descriptor::getName).reversed())
+                       .sorted(Comparator.comparing(DescriptorDTO::getName).reversed())
                        .collect(Collectors.toList());
            }
         }

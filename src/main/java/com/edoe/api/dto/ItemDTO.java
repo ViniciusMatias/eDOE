@@ -12,11 +12,11 @@ public class ItemDTO implements Serializable {
     private Long id;
     private String detail;
     private Integer amount;
-    private Descriptor descriptor;
+    private DescriptorDTO descriptor;
     private UserDTO user;
 
 
-    public ItemDTO(Long id, String detail, Integer amount, Descriptor descriptor, UserDTO user) {
+    public ItemDTO(Long id, String detail, Integer amount, DescriptorDTO descriptor, UserDTO user) {
         this.id = id;
         this.detail = detail;
         this.amount = amount;
@@ -28,7 +28,7 @@ public class ItemDTO implements Serializable {
         this.id = item.getId();
         this.detail = item.getDetail();
         this.amount = item.getAmount();
-        this.descriptor = item.getDescriptor();
+        this.descriptor = new DescriptorDTO(item.getDescriptor());
         this.user = new UserDTO(item.getUser());
     }
 
@@ -67,11 +67,11 @@ public class ItemDTO implements Serializable {
         this.amount = amount;
     }
 
-    public Descriptor getDescriptor() {
+    public DescriptorDTO getDescriptor() {
         return descriptor;
     }
 
-    public void setDescriptor(Descriptor descriptor) {
+    public void setDescriptor(DescriptorDTO descriptor) {
         this.descriptor = descriptor;
     }
 }

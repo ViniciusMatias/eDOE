@@ -28,8 +28,20 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         return  new ResponseEntity<Object>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({ExpiredJwtException.class})
+    @ExceptionHandler({NotCredentialException.class})
     public ResponseEntity<Object> NotCredentialException(Exception e, WebRequest request)
+    {
+
+        Error error = new Error();
+        error.setStatus(HttpStatus.FORBIDDEN);
+        error.setTimestamp(LocalDate.now());
+        error.setMessage(e.getMessage());
+
+        return  new ResponseEntity<Object>(error, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler({ExpiredJwtException.class})
+    public ResponseEntity<Object> ExpiredJwtException(Exception e, WebRequest request)
     {
 
         Error error = new Error();

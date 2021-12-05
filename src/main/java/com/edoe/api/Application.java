@@ -34,6 +34,9 @@ public class Application implements CommandLineRunner {
 
 		userRepository.save(doador2);
 
+		User receptor = new User(null, "receptor@receptor.com", "12345", "83991625262", "Igreja", "indet", Role.APENAS_RECEPTOR);
+
+		userRepository.save(receptor);
 
 	}
 }

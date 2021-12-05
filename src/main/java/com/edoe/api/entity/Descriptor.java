@@ -17,25 +17,26 @@ public class Descriptor implements Serializable {
     private List<Item> itens;
 
 
-
+    @OneToMany(mappedBy = "descriptor" , cascade = CascadeType.ALL)
+    private List<ItemRequired> itemRequireds;
 
     public Descriptor() {
     }
 
-    public Descriptor(Long id, String name, List<Item> itens) {
+    public Descriptor(Long id, String name, List<Item> itens, List<ItemRequired> itemRequireds) {
         this.id = id;
         this.name = name;
         this.itens = itens;
-       // this.Required = itensRequired;
+        this.itemRequireds = itemRequireds;
     }
 
-//    public List<ItemRequired> getRequired() {
-//        return Required;
-//    }
-//
-//    public void setRequired(List<ItemRequired> required) {
-//        this.Required = required;
-//    }
+    public List<ItemRequired> getRequired() {
+        return itemRequireds;
+    }
+
+    public void setRequired(List<ItemRequired> required) {
+        this.itemRequireds = required;
+    }
 
     public Long getId() {
         return id;
