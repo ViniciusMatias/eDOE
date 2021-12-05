@@ -103,4 +103,14 @@ public class ItemRequiredService {
         return itemRequiredRepository.findAll().stream().filter(item -> item.getDeleted() == false).map( item -> new ItemRequiredDTO(item)).collect(Collectors.toList());
     }
 
+
+    public ItemRequired getItemRequeridByid(Long id){
+        ItemRequired itemRequired = itemRequiredRepository.findById(id).get();
+        if(itemRequired.getDeleted() != true){
+            return itemRequired;
+        }else{
+            return null;
+        }
+    }
+
 }

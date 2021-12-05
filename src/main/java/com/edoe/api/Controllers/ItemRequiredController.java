@@ -2,6 +2,7 @@ package com.edoe.api.Controllers;
 
 import com.edoe.api.dto.ItemDTO;
 import com.edoe.api.dto.ItemRequiredDTO;
+import com.edoe.api.entity.Donation;
 import com.edoe.api.entity.ItemRequired;
 import com.edoe.api.services.DoacoesService;
 import com.edoe.api.services.ItemRequiredService;
@@ -58,5 +59,15 @@ public class ItemRequiredController {
     public ResponseEntity<?> findMatches(@RequestHeader("Authorization")String header, @RequestBody ItemRequired itemRequired) throws NotCredentialException {
         List<ItemDTO> list = doacoesService.matchesItens(header,itemRequired);
         return list == null ?  ResponseEntity.notFound().build() :  ResponseEntity.ok(doacoesService.matchesItens(header,itemRequired));
+    }
+
+    @PostMapping("/v1/api/edoe/donation/{idItemRequerid}/{idItem}/{amount}")
+    public void donation(@RequestHeader("Authorization") String header, @PathVariable(value = "idItemRequerid") Long idItemRequired, @PathVariable(value = "idItem") Long idItem, @PathVariable(value = "amount") Integer amount) throws NotCredentialException {
+         doacoesService.donation(header,idItemRequired,idItem, amount);
+    }
+
+    @GetMapping("/v1/api/edoe/donations")
+    public ResponseEntity<List<Donation>> getAllDonation(@RequestHeader("Authorization") String header) {
+        return ResponseEntity.ok(doacoesService.getAllDonation(header));
     }
 }

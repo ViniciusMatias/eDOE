@@ -4,6 +4,7 @@ import com.edoe.api.dto.DescriptorDTO;
 import com.edoe.api.dto.ItemDTO;
 import com.edoe.api.entity.Descriptor;
 import com.edoe.api.entity.Item;
+import com.edoe.api.entity.ItemRequired;
 import com.edoe.api.entity.User;
 import com.edoe.api.enums.Role;
 import com.edoe.api.repositories.ItemRepository;
@@ -120,5 +121,13 @@ public class ItemService {
 
     public List<ItemDTO> getItemNotDeleted() {
         return itemRepository.findAll().stream().filter(item -> item.getDeleted() == false).map( item -> new ItemDTO(item)).collect(Collectors.toList());
+    }
+    public Item getItemRequeridByid(Long id){
+        Item itemRequired = itemRepository.findById(id).get();
+        if(itemRequired.getDeleted() != true){
+            return itemRequired;
+        }else{
+            return null;
+        }
     }
 }
