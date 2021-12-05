@@ -23,6 +23,8 @@ public class Item implements Serializable {
     @JoinColumn(name = "descriptor_id")
     private Descriptor descriptor;
 
+    private Boolean deleted = false;
+
     public Item(Long id, String name, Integer amount, String detail, User user, Descriptor descriptor) {
         this.id = id;
         this.name = name;
@@ -33,6 +35,14 @@ public class Item implements Serializable {
     }
 
     public Item() {
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Long getId() {

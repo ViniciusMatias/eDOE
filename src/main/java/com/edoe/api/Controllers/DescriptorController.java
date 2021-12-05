@@ -17,13 +17,13 @@ public class DescriptorController {
     private DescriptorService descriptorService;
 
     @PostMapping("/v1/api/edoe/descriptor")
-    public ResponseEntity<Descriptor> saveDescriptor(@RequestBody Descriptor descriptor) throws Exception {
+    public ResponseEntity<Descriptor> saveDescriptor(@RequestBody Descriptor descriptor, @RequestHeader("authorization") String header) throws Exception {
 
-        Descriptor desc = descriptorService.saveDescriptor(descriptor);
+        Descriptor desc = descriptorService.saveDescriptor(descriptor, header);
         return desc == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(desc);
     }
 
-    @GetMapping("/v1/api/edoe/descriptor")
+    @GetMapping("/v1/api/edoe/descriptors")
     public ResponseEntity<List<Descriptor>> getAllDescriptors(){
           return ResponseEntity.ok(descriptorService.getDescriptors());
     }

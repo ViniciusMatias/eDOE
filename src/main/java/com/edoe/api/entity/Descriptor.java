@@ -12,9 +12,12 @@ public class Descriptor implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @JsonBackReference
-    @OneToMany(mappedBy = "descriptor")
+   @JsonBackReference
+    @OneToMany(mappedBy = "descriptor" , cascade = CascadeType.ALL)
     private List<Item> itens;
+
+
+
 
     public Descriptor() {
     }
@@ -23,7 +26,16 @@ public class Descriptor implements Serializable {
         this.id = id;
         this.name = name;
         this.itens = itens;
+       // this.Required = itensRequired;
     }
+
+//    public List<ItemRequired> getRequired() {
+//        return Required;
+//    }
+//
+//    public void setRequired(List<ItemRequired> required) {
+//        this.Required = required;
+//    }
 
     public Long getId() {
         return id;

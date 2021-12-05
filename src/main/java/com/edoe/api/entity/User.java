@@ -27,6 +27,8 @@ public class User implements Serializable {
     @JsonBackReference
     @OneToMany(mappedBy = "user")
     private List<Item> items;
+
+
     @Enumerated(EnumType.ORDINAL)
     private Role role = Role.APENAS_DOADOR ;
 

@@ -1,16 +1,18 @@
 package com.edoe.api.services;
 
+import com.edoe.api.dto.ItemDTO;
 import com.edoe.api.entity.Descriptor;
 import com.edoe.api.entity.Item;
+import com.edoe.api.entity.User;
 import com.edoe.api.enums.Role;
 import com.edoe.api.repositories.ItemRepository;
 import com.edoe.api.services.exceptions.NotCredentialException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
@@ -21,10 +23,13 @@ public class ItemService {
     @Autowired
     private UsuarioService usuarioService;
 
-    public Item saveItem(String authorization , Item item) throws NotCredentialException {
+    public ItemDTO saveItem(String authorization , Item item) throws NotCredentialException {
+        User user = usuarioService.UsuarioDoTokenItem(authorization);
         if(usuarioService.usuarioTemPermissaoDoador(authorization,  usuarioService.UsuarioDoToken(authorization))){
             if( item.getUser().getRole() == Role.APENAS_DOADOR){
-                return itemRepository.save(item);
+                item.setUser(user);
+                Item itemSave =  itemRepository.save(item);
+                return new ItemDTO(itemSave);
             }
         }
         throw new NotCredentialException("Usuario não pode cadastrar");
@@ -32,32 +37,79 @@ public class ItemService {
 
   public void remove(Long id, String authorization) throws NotCredentialException {
      Item itemRemove = itemRepository.getById(id);
-      System.out.println(itemRemove.getUser().getEmail());
-      System.out.println(usuarioService.UsuarioDoTokenItem(authorization).getEmail());
       if(usuarioService.usuarioTemPermissaoDoador(authorization,  usuarioService.UsuarioDoToken(authorization))){
-          if(itemRemove.getUser().getEmail().equals(usuarioService.UsuarioDoTokenItem(authorization).getEmail())){
-              itemRepository.delete(itemRemove);
+          if(itemRemove.getUser().getRole() == Role.APENAS_DOADOR){
+              if(itemRemove.getUser().getEmail().equals(usuarioService.UsuarioDoTokenItem(authorization).getEmail())){
+                  itemRemove.setDeleted(true);
+                  itemRepository.save(itemRemove);
+              }
           }
+      }else {
+          throw new NotCredentialException("Usuario não pode remove");
       }
   }
 
-  public Item update(Long id, Item item, String authorization) throws NotCredentialException {
+  public ItemDTO update(Long id, Item item, String authorization) throws NotCredentialException {
 
-      if(usuarioService.usuarioTemPermissao(authorization,  usuarioService.UsuarioDoToken(authorization))){
-          Item itemreq = itemRepository.getById(id);
-          itemreq.setAmount(item.getAmount());
-          itemreq.setDetail(item.getDetail());
-          return itemRepository.save(itemreq);
+      Item itemUpdate = itemRepository.getById(id);
+      if(usuarioService.usuarioTemPermissao(authorization,  usuarioService.UsuarioDoToken(authorization))) {
+          if(itemUpdate.getUser().getRole() == Role.APENAS_RECEPTOR){
+              if(itemUpdate.getUser().getEmail().equals(usuarioService.UsuarioDoTokenItem(authorization).getEmail())){
+                  Item itemreq = itemRepository.getById(id);
+                  itemreq.setAmount(item.getAmount());
+                  itemreq.setDetail(item.getDetail());
+                  Item itemsave = itemRepository.save(itemreq);
+                  return new ItemDTO(itemsave);
+              }
+          }
+
       }
       throw new NotCredentialException("Usuario não tem as credenciais de acesso !");
     }
 
 
-    public Page<Descriptor> findAllItem(String authorization, Pageable pageable)  throws NotCredentialException {
+    public List<Descriptor> findAllItem(String authorization, String order)  throws NotCredentialException {
         if(usuarioService.usuarioTemPermissao(authorization,  usuarioService.UsuarioDoToken(authorization))){
-            return itemRepository.findAll(pageable).map((items) -> items.getDescriptor());
+           if(order.equals("dsc")){
+               return getItemNotDeleted()
+                       .stream()
+                       .map((items) -> items.getDescriptor())
+                       .sorted(Comparator.comparing(Descriptor::getName))
+                       .collect(Collectors.toList());
+           }
+           if (order.equals("asc")){
+               return getItemNotDeleted()
+                       .stream()
+                       .map((items) -> items.getDescriptor())
+                       .sorted(Comparator.comparing(Descriptor::getName).reversed())
+                       .collect(Collectors.toList());
+           }
         }
         throw new NotCredentialException("Usuario não tem as credenciais de acesso !");
     }
 
+    public List<ItemDTO> getAll(Long id) {
+
+        return itemRepository.findAll().stream().filter((e) -> e.getDescriptor().getId() == id).map((e) -> new ItemDTO(e)).collect(Collectors.toList());
+    }
+    public List<ItemDTO> getMaxAmout() {
+        return getItemNotDeleted()
+                .stream()
+                .sorted(Comparator.comparing(ItemDTO::getAmount).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
+
+    }
+
+    public List<ItemDTO> findDescriptorName(String name) {
+        return itemRepository.findAll().stream()
+                .filter(item -> item.getDeleted() == false)
+                .filter((item) -> item.getDescriptor().getName().equalsIgnoreCase(name))
+                .map(item -> new ItemDTO(item)).collect(Collectors.toList());
+
+    }
+
+    public List<ItemDTO> getItemNotDeleted() {
+        return itemRepository.findAll().stream().filter(item -> item.getDeleted() == false).map( item -> new ItemDTO(item)).collect(Collectors.toList());
+    }
 }

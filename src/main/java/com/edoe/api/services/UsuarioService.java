@@ -8,7 +8,6 @@ import com.edoe.api.services.exceptions.NotCredentialException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.ServletException;
 import java.util.Optional;
 @Service
 public class UsuarioService {
@@ -50,6 +49,12 @@ public class UsuarioService {
         Optional<User> optUsuario = userRepository.findByEmail(subject);
         return optUsuario.isPresent() && optUsuario.get().getEmail().equals(email) && optUsuario.get().getRole() == Role.APENAS_DOADOR ;
     }
+    public boolean usuarioTemPermissaoReceptor(String authorizationHeader, String email) throws NotCredentialException {
+        String subject = serviceJWT.getSujeitoDoToken(authorizationHeader);
+        Optional<User> optUsuario = userRepository.findByEmail(subject);
+        return optUsuario.isPresent() && optUsuario.get().getEmail().equals(email) && optUsuario.get().getRole() == Role.APENAS_RECEPTOR ;
+    }
+
 
     public User saveUsuario(String authorization ,User user) throws NotCredentialException {
 
