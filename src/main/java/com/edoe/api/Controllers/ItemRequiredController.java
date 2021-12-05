@@ -3,6 +3,7 @@ package com.edoe.api.Controllers;
 import com.edoe.api.dto.ItemDTO;
 import com.edoe.api.dto.ItemRequiredDTO;
 import com.edoe.api.entity.ItemRequired;
+import com.edoe.api.services.DoacoesService;
 import com.edoe.api.services.ItemRequiredService;
 import com.edoe.api.services.exceptions.NotCredentialException;
 import com.edoe.api.services.exceptions.RepeatedNameException;
@@ -18,6 +19,9 @@ public class ItemRequiredController {
 
     @Autowired
     private ItemRequiredService itemRequiredService;
+
+    @Autowired
+    private DoacoesService doacoesService;
 
 
     @PostMapping("/v1/api/edoe/item-required")
@@ -50,4 +54,9 @@ public class ItemRequiredController {
         return ResponseEntity.ok(itemRequiredService.findDescriptorName(name));
     }
 
+    @PostMapping("/v1/api/edoe/item-required/matches")
+    public ResponseEntity<?> findMatches(@RequestHeader("Authorization")String header, @RequestBody ItemRequired itemRequired) throws NotCredentialException {
+        List<ItemDTO> list = doacoesService.matchesItens(header,itemRequired);
+        return list == null ?  ResponseEntity.notFound().build() :  ResponseEntity.ok(doacoesService.matchesItens(header,itemRequired));
+    }
 }

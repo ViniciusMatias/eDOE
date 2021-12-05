@@ -102,4 +102,5 @@ public class ItemRequiredService {
     public List<ItemRequiredDTO> getItemNotDeleted() {
         return itemRequiredRepository.findAll().stream().filter(item -> item.getDeleted() == false).map( item -> new ItemRequiredDTO(item)).collect(Collectors.toList());
     }
+
 }
