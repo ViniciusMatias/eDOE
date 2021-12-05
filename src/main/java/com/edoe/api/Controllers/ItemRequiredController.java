@@ -1,5 +1,6 @@
 package com.edoe.api.Controllers;
 
+import com.edoe.api.dto.ItemDTO;
 import com.edoe.api.dto.ItemRequiredDTO;
 import com.edoe.api.entity.ItemRequired;
 import com.edoe.api.services.ItemRequiredService;
@@ -8,6 +9,9 @@ import com.edoe.api.services.exceptions.RepeatedNameException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.websocket.server.PathParam;
+import java.util.List;
 
 @RestController
 public class ItemRequiredController {
@@ -31,5 +35,19 @@ public class ItemRequiredController {
         return ResponseEntity.ok().body(itemRequiredService.updateItemRequired(id, item, header));
     }
 
+    @GetMapping("/v1/api/edoe/item-required/descriptor/{id}")
+    public ResponseEntity<List<ItemRequiredDTO>> itemsRequiredByDescriptor(@PathVariable Long id) {
+        return ResponseEntity.ok(itemRequiredService.getAll(id));
+    }
+
+    @GetMapping("/v1/api/edoe/item-required/amount")
+    public ResponseEntity<List<ItemRequiredDTO>> itemsRequiredAmount() {
+        return ResponseEntity.ok(itemRequiredService.getMaxAmout());
+    }
+
+    @GetMapping("/v1/api/edoe/item-required/find")
+    public ResponseEntity<List<ItemRequiredDTO>> ItemsName(@PathParam( value = "name") String name) throws NotCredentialException {
+        return ResponseEntity.ok(itemRequiredService.findDescriptorName(name));
+    }
 
 }

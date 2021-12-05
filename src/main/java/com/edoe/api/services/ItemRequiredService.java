@@ -1,5 +1,6 @@
 package com.edoe.api.services;
 
+import com.edoe.api.dto.ItemDTO;
 import com.edoe.api.dto.ItemRequiredDTO;
 import com.edoe.api.entity.Descriptor;
 import com.edoe.api.entity.ItemRequired;
@@ -10,6 +11,10 @@ import com.edoe.api.services.exceptions.NotCredentialException;
 import com.edoe.api.services.exceptions.RepeatedNameException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemRequiredService {
@@ -71,5 +76,30 @@ public class ItemRequiredService {
 
         }
         throw new NotCredentialException("Usuario não tem as credenciais de acesso !");
+    }
+
+    public List<ItemRequiredDTO> getAll(Long id) {
+
+        return itemRequiredRepository.findAll().stream().filter((e) -> e.getDescriptor().getId() == id).map((e) -> new ItemRequiredDTO(e)).collect(Collectors.toList());
+    }
+
+    public List<ItemRequiredDTO> getMaxAmout() {
+        return getItemNotDeleted()
+                .stream()
+                .sorted(Comparator.comparing(ItemRequiredDTO::getAmount).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
+
+    }
+
+    public List<ItemRequiredDTO> findDescriptorName(String name) {
+        return itemRequiredRepository.findAll().stream()
+                .filter(item -> item.getDeleted() == false)
+                .filter((item) -> item.getDescriptor().getName().equalsIgnoreCase(name))
+                .map(item -> new ItemRequiredDTO(item)).collect(Collectors.toList());
+
+    }
+    public List<ItemRequiredDTO> getItemNotDeleted() {
+        return itemRequiredRepository.findAll().stream().filter(item -> item.getDeleted() == false).map( item -> new ItemRequiredDTO(item)).collect(Collectors.toList());
     }
 }

@@ -45,7 +45,7 @@ public class ItemController {
     }
 
     @GetMapping("/v1/api/edoe/items/amount")
-    public ResponseEntity<List<ItemDTO>> itemsAmount( @RequestHeader("Authorization") String header) {
+    public ResponseEntity<List<ItemDTO>> itemsAmount() {
         return ResponseEntity.ok(itemService.getMaxAmout());
     }
 
