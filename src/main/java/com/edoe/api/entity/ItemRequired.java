@@ -13,7 +13,7 @@ public class ItemRequired implements Serializable {
     private String motivation;
     private Integer amount;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "descriptor_id")
     private Descriptor descriptor;
     @ManyToOne

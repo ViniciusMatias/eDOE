@@ -1,6 +1,7 @@
 package com.edoe.api.services;
 
 import com.edoe.api.dto.ItemRequiredDTO;
+import com.edoe.api.entity.Descriptor;
 import com.edoe.api.entity.ItemRequired;
 import com.edoe.api.entity.User;
 import com.edoe.api.enums.Role;

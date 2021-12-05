@@ -14,11 +14,11 @@ public class Descriptor implements Serializable {
     private Long id;
     private String name;
     @JsonBackReference(value = "itens")
-    @OneToMany(mappedBy = "descriptor" , cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "descriptor")
     private List<Item> itens;
 
     @JsonBackReference(value = "required")
-    @OneToMany(mappedBy = "descriptor" , cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "descriptor")
     private List<ItemRequired> required;
 
     public Descriptor() {
