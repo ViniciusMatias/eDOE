@@ -2,6 +2,7 @@ package com.edoe.api.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+
 @Entity
 public class ItemRequired implements Serializable {
 
@@ -11,6 +12,7 @@ public class ItemRequired implements Serializable {
     private Long id;
     private String motivation;
     private Integer amount;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "descriptor_id")
     private Descriptor descriptor;
@@ -78,4 +80,6 @@ public class ItemRequired implements Serializable {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
+
 }

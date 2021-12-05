@@ -2,6 +2,7 @@ package com.edoe.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -12,13 +13,13 @@ public class Descriptor implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-   @JsonBackReference
+    @JsonBackReference(value = "itens")
     @OneToMany(mappedBy = "descriptor" , cascade = CascadeType.ALL)
     private List<Item> itens;
 
-
+    @JsonBackReference(value = "required")
     @OneToMany(mappedBy = "descriptor" , cascade = CascadeType.ALL)
-    private List<ItemRequired> itemRequireds;
+    private List<ItemRequired> required;
 
     public Descriptor() {
     }
@@ -27,15 +28,15 @@ public class Descriptor implements Serializable {
         this.id = id;
         this.name = name;
         this.itens = itens;
-        this.itemRequireds = itemRequireds;
+        this.required = itemRequireds;
     }
 
     public List<ItemRequired> getRequired() {
-        return itemRequireds;
+        return required;
     }
 
     public void setRequired(List<ItemRequired> required) {
-        this.itemRequireds = required;
+        this.required = required;
     }
 
     public Long getId() {
