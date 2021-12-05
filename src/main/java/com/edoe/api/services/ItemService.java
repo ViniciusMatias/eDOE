@@ -59,10 +59,10 @@ public class ItemService {
   }
 
   public ItemDTO update(Long id, Item item, String authorization) throws NotCredentialException {
-
+      User user = usuarioService.UsuarioDoTokenItem(authorization);
       Item itemUpdate = itemRepository.getById(id);
-      if(usuarioService.usuarioTemPermissao(authorization,  usuarioService.UsuarioDoToken(authorization))) {
-          if(itemUpdate.getUser().getRole() == Role.APENAS_RECEPTOR){
+      if(usuarioService.usuarioTemPermissaoDoador(authorization,  usuarioService.UsuarioDoToken(authorization))) {
+          if(user.getRole() == Role.APENAS_DOADOR){
               if(itemUpdate.getUser().getEmail().equals(usuarioService.UsuarioDoTokenItem(authorization).getEmail())){
                   Item itemreq = itemRepository.getById(id);
                   itemreq.setAmount(item.getAmount());
