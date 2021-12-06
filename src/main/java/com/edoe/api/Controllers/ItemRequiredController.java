@@ -64,6 +64,8 @@ public class ItemRequiredController {
     @PostMapping("/v1/api/edoe/donation/{idItemRequerid}/{idItem}/{amount}")
     public void donation(@RequestHeader("Authorization") String header, @PathVariable(value = "idItemRequerid") Long idItemRequired, @PathVariable(value = "idItem") Long idItem, @PathVariable(value = "amount") Integer amount) throws NotCredentialException {
          doacoesService.donation(header,idItemRequired,idItem, amount);
+        System.out.println(idItem);
+        System.out.println(idItemRequired);
     }
 
     @GetMapping("/v1/api/edoe/donations")

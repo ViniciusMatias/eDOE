@@ -57,18 +57,25 @@ public class UsuarioService {
 
 
     public User saveUsuario(String authorization ,User user) throws NotCredentialException {
-
+        User userToken = UsuarioDoTokenItem(authorization);
         if(usuarioTemPermissaoAdmin(authorization,  UsuarioDoToken(authorization))){
+            if(userToken.getRole() == Role.ADMIN){
+
             return userRepository.save(user);
+            }
         }
         throw new NotCredentialException("Usuario não pode cadastrar");
     }
 
     public User updateRole(Long id, User userRole, String authorization) throws NotCredentialException {
         User user = userRepository.getById(id);
-        user.setRole(userRole.getRole());
+
+        User userToken = UsuarioDoTokenItem(authorization);
         if(usuarioTemPermissaoAdmin(authorization, UsuarioDoToken(authorization))){
+            if(userToken.getRole() == Role.ADMIN){
+            user.setRole(userRole.getRole());
             return userRepository.save(user);
+            }
         }
         throw new NotCredentialException("Usuario não pode atualizar");
     }
